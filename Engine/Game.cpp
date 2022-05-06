@@ -57,7 +57,10 @@ void Game::UpdateModel()
 	{
 		y_mobile = y_mobile - 1;
 	}
-
+	
+	x_mobile = Clapx(x_mobile, 5);
+	y_mobile = Clapy(y_mobile, 5);
+	
 	colliding =
 		OverlapTest(x_fixed0, y_fixed0, x_mobile, y_mobile) ||
 		OverlapTest(x_fixed1, y_fixed1, x_mobile, y_mobile) ||
@@ -84,26 +87,37 @@ void Game::ComposeFrame()
 
 void Game::DrawBox(int x, int y, int r, int g, int b)
 {
-	gfx.PutPixel(-5 + x, -5 + y, r, g, b);
+	int k = 8;		// sería conveniente que k y gap, fuesen miembros de una Class aimpoint o box
+					// para que su valor como getter pudiese ser consultado por Clampx o fitInside 
+					// o para crear diferentes cursores aimpoints ...
+	int gap = 3;
+		for (int i = -k; i <= k; i++)
+		for (int j = -k; j <= k; j++)
+			if (abs(i)+abs(j) < 2 * k - gap)
+				continue;
+			else
+				gfx.PutPixel(i+x, j+y, r, g, b);
+
+	/*gfx.PutPixel(-5 + x, -5 + y, r, g, b);
 	gfx.PutPixel(-5 + x, -4 + y, r, g, b);
 	gfx.PutPixel(-5 + x, -3 + y, r, g, b);
 	gfx.PutPixel(-4 + x, -5 + y, r, g, b);
 	gfx.PutPixel(-3 + x, -5 + y, r, g, b);
-	gfx.PutPixel(-5 + x, 5 + y, r, g, b);
-	gfx.PutPixel(-5 + x, 4 + y, r, g, b);
-	gfx.PutPixel(-5 + x, 3 + y, r, g, b);
-	gfx.PutPixel(-4 + x, 5 + y, r, g, b);
-	gfx.PutPixel(-3 + x, 5 + y, r, g, b);
-	gfx.PutPixel(5 + x, -5 + y, r, g, b);
-	gfx.PutPixel(5 + x, -4 + y, r, g, b);
-	gfx.PutPixel(5 + x, -3 + y, r, g, b);
-	gfx.PutPixel(4 + x, -5 + y, r, g, b);
-	gfx.PutPixel(3 + x, -5 + y, r, g, b);
-	gfx.PutPixel(5 + x, 5 + y, r, g, b);
-	gfx.PutPixel(5 + x, 4 + y, r, g, b);
-	gfx.PutPixel(5 + x, 3 + y, r, g, b);
-	gfx.PutPixel(4 + x, 5 + y, r, g, b);
-	gfx.PutPixel(3 + x, 5 + y, r, g, b);
+	gfx.PutPixel(-5 + x,  5 + y, r, g, b);
+	gfx.PutPixel(-5 + x,  4 + y, r, g, b);
+	gfx.PutPixel(-5 + x,  3 + y, r, g, b);
+	gfx.PutPixel(-4 + x,  5 + y, r, g, b);
+	gfx.PutPixel(-3 + x,  5 + y, r, g, b);
+	gfx.PutPixel( 5 + x, -5 + y, r, g, b);
+	gfx.PutPixel( 5 + x, -4 + y, r, g, b);
+	gfx.PutPixel( 5 + x, -3 + y, r, g, b);
+	gfx.PutPixel( 4 + x, -5 + y, r, g, b);
+	gfx.PutPixel( 3 + x, -5 + y, r, g, b);
+	gfx.PutPixel( 5 + x,  5 + y, r, g, b);
+	gfx.PutPixel( 5 + x,  4 + y, r, g, b);
+	gfx.PutPixel( 5 + x,  3 + y, r, g, b);
+	gfx.PutPixel( 4 + x,  5 + y, r, g, b);
+	gfx.PutPixel( 3 + x,  5 + y, r, g, b);*/
 }
 
 bool Game::OverlapTest(int box0x, int box0y, int box1x, int box1y)
@@ -123,4 +137,21 @@ bool Game::OverlapTest(int box0x, int box0y, int box1x, int box1y)
 		right_box0 >= left_box1 &&
 		top_box0 <= bottom_box1 &&
 		bottom_box0 >= top_box1;
+}
+
+int Game::Clapx(int x, int aimsize)
+{
+	if (x < aimsize)
+		x = aimsize;
+	if (x > Graphics::ScreenWidth - aimsize - 1)
+		x = Graphics::ScreenWidth - aimsize - 1;
+	return x;
+}
+int Game::Clapy(int y, int aimsize)
+{
+	if (y < aimsize)
+		y = aimsize;
+	if (y > Graphics::ScreenHeight - aimsize - 1)
+		y = Graphics::ScreenHeight - aimsize - 1;
+	return y;
 }
